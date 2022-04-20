@@ -12,7 +12,9 @@ namespace FileManager
         static void Main()
         {
             var Dir = new DirectoryInfo("H:\\123");
-            Command.Delete(Dir);
+            var DirTo = new DirectoryInfo("H:\\1234");
+            Command.Copy (Dir,DirTo);
+
             Console.WriteLine(Command.Message);
 
             Console.ReadKey(false);
