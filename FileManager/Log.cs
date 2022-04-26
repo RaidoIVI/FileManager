@@ -9,8 +9,9 @@ namespace FileManager
     internal class Log
     {
         public static void Write (string Value)
+
         {
-            throw new NotImplementedException ();
+           // throw new NotImplementedException ();
         }
     }
 }

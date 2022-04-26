@@ -103,32 +103,82 @@ namespace FileManager
         #endregion
 
         #region Copy
-        public static void Copy (DirectoryInfo From, DirectoryInfo To)
+
+        public static async Task CopyAsync (DirectoryInfo From, DirectoryInfo To)
         {
             if (!To.Exists)
             {
                 To.Create ();
             }
-            foreach (FileInfo file in From.GetFiles())
+
+            try
             {
-                file.CopyTo (Path.Combine(To.FullName, file.Name),true);
+                foreach (DirectoryInfo directoryInfo in From.GetDirectories())
+                {
+                    var to = new DirectoryInfo(Path.Combine(To.FullName, directoryInfo.Name));
+
+                    if (!to.Exists)
+                    {
+                        to.Create();
+                    }
+
+                    await CopyAsync(directoryInfo, to);
+                    to.Refresh();
+                    to.Attributes = From.Attributes;
+                }
+                Error = false;
+            }
+            catch (Exception e)
+            {
+                Message = e.Message;
+                Error = true;
+                Log.Write(Message);
             }
 
-            foreach (DirectoryInfo directoryInfo in From.GetDirectories())
+            try
             {
-                var to = new DirectoryInfo (Path.Combine(To.FullName, directoryInfo.Name));
-                if (!to.Exists) 
+                foreach (FileInfo file in From.GetFiles())
                 {
-                    to.Create ();
+                    await CopyAsync(file, To);
                 }
-                Copy (directoryInfo,to);
+                Error = false;
+            }
+            catch (Exception ex)
+            {
+                Message = ex.Message;
+                Error = true;
+                Log.Write(Message);
             }
         }
-        public static void Copy (FileInfo File, DirectoryInfo To)
+        public static async Task CopyAsync (FileInfo File, DirectoryInfo To)
         {
-            File.CopyTo(Path.Combine(To.FullName, File.Name),true);
+            var to = new FileInfo(Path.Combine(To.FullName, File.Name));
+
+            if (to.Exists) 
+            {
+                to.Attributes = FileAttributes.Normal;
+            }
+            try
+            {
+                using (FileStream sourseStream = File.OpenRead())
+                {
+                    using (FileStream destinationStream = to.Create())
+                    {
+                        await sourseStream.CopyToAsync(destinationStream);
+                    }
+                }
+                to.Attributes = File.Attributes;
+                Error = false;
+            }
+            catch (Exception e)
+            {
+                Message = e.Message;
+                Error = true;
+                Log.Write(Message);
+            }
         }
 
         #endregion
+
     }
 }

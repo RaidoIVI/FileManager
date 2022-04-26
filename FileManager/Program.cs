@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Activities.Statements;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,14 +11,33 @@ namespace FileManager
     internal class Program
     {
         static void Main()
+
         {
-            var Dir = new DirectoryInfo("H:\\123");
-            var DirTo = new DirectoryInfo("H:\\1234");
-            Command.Copy (Dir,DirTo);
+            var Dir = new DirectoryInfo("C:\\ProgramData");
+            var DirTo = new DirectoryInfo("C:\\1234");
+            var Copy = Command.CopyAsync (Dir,DirTo);
 
             Console.WriteLine(Command.Message);
+            do
+            {
+                Console.WriteLine("Программа ожидает завершения копирования...");
+                System.Threading.Thread.Sleep(5000);
+            }
+            while (!Copy.IsCompleted);
+
+            if (Command.Error)
+            {
+                Console.WriteLine(Command.Message);
+            }
+            else
+            {
+                Console.WriteLine("Успешно");
+            }
 
             Console.ReadKey(false);
+
+            Command.Delete (DirTo);
+
         }
     }
 }
