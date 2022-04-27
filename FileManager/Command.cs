@@ -27,7 +27,7 @@ namespace FileManager
                 Error = false;
             }
             catch (Exception e)
-            {
+            {                
                 Message = e.Message;
                 Error = true;
                 Log.Write(Message);
