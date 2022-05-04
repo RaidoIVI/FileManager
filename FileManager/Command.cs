@@ -1,71 +1,106 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FileManager
 {
-    public class Command
+    public static class Command
 
     {
-        public bool Error { get; private set; }
-        public readonly List<FileSystemInfo> fileList;
+        public static bool Error { get; private set; }
+        public static List<Task> InProgress { get; private set; }
+        
 
         #region Init
 
-        public Command (Commands Command, FileSystemInfo From, FileSystemInfo To = null)
-        {
-            fileList = new List<FileSystemInfo> ();
-            Error = false;
+        public static void ExecutionCommand (Commands Command, FileSystemInfo From, FileSystemInfo To)
 
+        {
             switch ( Command )
             {
                 case Commands.DirectoryList :
                     DirectoryList(From as DirectoryInfo);
                     return;
-                //case Commands.Copy:
-                //    Copy(From, To);
-                //    return;
-                case Commands.Delete:
-                    Delete(From);
+                case Commands.Copy:
+                    Copy(From, To);
                     return;
+                //case Commands.Delete:
+                //    Delete(From);
+                //    return;
             }
         }
-
         #endregion
 
         #region List
 
-        private void DirectoryList (DirectoryInfo Dir)
+        private static List<FileSystemInfo> DirectoryList (DirectoryInfo Dir, int Deep = -1)
         {
             try
             {
-                fileList.Add(Dir);
-                foreach (FileInfo File in Dir.GetFiles())
+                var dirList = new List<FileSystemInfo>();
+                if (Deep == 0)
                 {
-                    fileList.Add(File);
+                    foreach (DirectoryInfo dir in Dir.GetDirectories ())
+                    {
+                        dirList.Add(dir);
+                    }
                 }
-                foreach (DirectoryInfo dir in Dir.GetDirectories())
+                else
                 {
-                    DirectoryList(dir);
+                    Deep--;
+                    foreach (DirectoryInfo dir in Dir.GetDirectories())
+                    {
+                        dirList.AddRange(DirectoryList(dir, Deep));
+                    }
                 }
+                return dirList;
             }
             catch (Exception ex)
             {
                 Error = true;
                 Log.Write(ex.Message);
+                return null;
             }
+        }
+        private static List<FileInfo> FileList (DirectoryInfo Dir, int Deep = 0)  // по умолчанию только содержимое текущего каталога
+        {
+            var fileList = new List<FileInfo>();
+            try
+            {
+                if (Deep == 0)
+                {                                                                           // содержимое текущего каталога
+                    foreach (FileInfo file in Dir.GetFiles())
+                    {
+                        fileList.Add(file);
+                    }
+                }
+                else                                                                        // все файли из текущей и вложенных каталогов
+                {
+                    foreach (FileInfo file in Dir.GetFiles())
+                    {
+                        fileList.Add(file);
+                    }
+                    foreach (DirectoryInfo dir in Dir.GetDirectories())
+                    {
+                        fileList.AddRange(FileList(dir, -1));
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Write(e.Message);
+                Error = true;
+            }
+            return fileList;
         }
 
         #endregion
 
         #region Delete
 
-        private void Delete (FileSystemInfo Delete)
-        {
-            DirectoryList(Delete as DirectoryInfo);
-            while fileList
-        }
+
 
         //private void Delete(FileSystemInfo ObjToDelete)
         //{
@@ -163,9 +198,38 @@ namespace FileManager
 
         #endregion
 
-        //#region Copy
+        #region Copy
 
-        //private void Copy 
+        private static async void Copy (FileSystemInfo From, FileSystemInfo To)
+        {
+            var copyList = FileList(From as DirectoryInfo,-1);
+            var copyDir = DirectoryList(From as DirectoryInfo, -1);
+            try
+            {
+                foreach (DirectoryInfo dir in copyDir)
+                {
+                    var pathTo = new StringBuilder(dir.FullName);
+                    pathTo.Remove(0, From.FullName.Length);
+                    pathTo.Insert(0, To.FullName);
+                    var to = new DirectoryInfo(pathTo.ToString());
+                    to.Create();
+                }
+                foreach (FileInfo file in copyList)
+                {
+                    var pathTo = new StringBuilder(file.FullName);
+                    pathTo.Remove(0, From.FullName.Length);
+                    pathTo.Insert(0, To.FullName);
+                    var to = new FileInfo(pathTo.ToString());
+                    await CopyAsync(file, to);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Write(e.Message);
+                Error = true;
+            }
+        }
+
         //public static async Task CopyAsync(DirectoryInfo From, DirectoryInfo To)
         //{
         //    if (!To.Exists)
@@ -212,35 +276,36 @@ namespace FileManager
         //        Log.Write(Message);
         //    }
         //}
-        //public static async Task CopyAsync(FileInfo File, DirectoryInfo To)
-        //{
-        //    var to = new FileInfo(Path.Combine(To.FullName, File.Name));
+        private static async Task CopyAsync(FileInfo File, FileInfo To)
+        {
+            // var to = new FileInfo(Path.Combine(To.FullName, File.Name));
 
-        //    if (to.Exists)
-        //    {
-        //        to.Attributes = FileAttributes.Normal;
-        //    }
-        //    try
-        //    {
-        //        using (FileStream sourseStream = File.OpenRead())
-        //        {
-        //            using (FileStream destinationStream = to.Create())
-        //            {
-        //                await sourseStream.CopyToAsync(destinationStream);
-        //            }
-        //        }
-        //        to.Attributes = File.Attributes;
-        //        Error = false;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Message = e.Message;
-        //        Error = true;
-        //        Log.Write(Message);
-        //    }
-        //}
+            if (To.Exists)
+            {
+                To.Attributes = FileAttributes.Normal;
+            }
+            try
+            {
+                using (FileStream sourseStream = File.OpenRead())
+                {
+                    using (FileStream destinationStream = To.Create())
+                    {
+                        await sourseStream.CopyToAsync(destinationStream);
+                        destinationStream.Flush(true);
+                    }
+                }
+                To.Attributes = File.Attributes;
+                
 
-        //#endregion
+            }
+            catch (Exception e)
+            {
+                Error = true;
+                Log.Write(e.Message);
+            }
+        }
+
+        #endregion
 
     }
 }

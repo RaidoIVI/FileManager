@@ -10,15 +10,15 @@ namespace FileManager
         static void Main()
 
         {
-            //var Dir = new DirectoryInfo("C:\\ProgramData");
+            var Dir = new DirectoryInfo("C:\\ProgramData");
             var DirTo = new DirectoryInfo("C:\\123");
             //var dir = new Command(Commands.DirectoryList, Dir);
             //foreach (var item in dir.fileList)
             //{
             //    Console.WriteLine(item.FullName);
             //}
-            var tmp = new Command (Commands.Delete, DirTo);
-
+           Command.ExecutionCommand(Commands.Copy, Dir, DirTo);
+            Console.WriteLine("типа готово");
             Console.ReadKey(true);
         }
     }
