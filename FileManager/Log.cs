@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace FileManager
 {
-    internal class Log 
+    internal static class Log 
     {
 
 
-        public static void Write(string Value)
+        public static void Write(Exception Value)
 
         {
-            Console.WriteLine(Value);
+            Console.WriteLine ($"Метод {Value.StackTrace.ToString() } вызвал исключение {Value.Message}");
         }
 
     }

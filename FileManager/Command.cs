@@ -11,8 +11,6 @@ namespace FileManager
 
     {
         public static bool Error { get; private set; }
-        public static string Message { get; private set; }
-        // public static List <Task> Tasks { get; } 
 
         #region Delete
 
@@ -28,9 +26,8 @@ namespace FileManager
             }
             catch (Exception e)
             {                
-                Message = e.Message;
                 Error = true;
-                Log.Write(Message);
+                Log.Write(e);
             }
             try
             {
@@ -42,9 +39,8 @@ namespace FileManager
             }
             catch (Exception ex)
             {
-                Message = ex.Message;
                 Error = true;
-                Log.Write(Message);
+                Log.Write(ex);
             }
         }
         public static void Delete(FileInfo File)
@@ -56,9 +52,8 @@ namespace FileManager
             }
             catch (Exception e)
             {
-                Message = e.Message;
                 Error = true;
-                Log.Write(Message);
+                Log.Write(e);
             }
         }
         private static void PrepareToDelete(DirectoryInfo Dir)
@@ -77,9 +72,8 @@ namespace FileManager
             }
             catch (Exception e)
             {
-                Message = e.Message;
                 Error = true;
-                Log.Write(Message);
+                Log.Write(e);
             }
         }
         private static void PrepareToDelete(FileInfo File)
@@ -87,13 +81,11 @@ namespace FileManager
             try
             {
                 File.Attributes = FileAttributes.Normal;
-                Error = false;
             }
             catch (Exception ex)
             {
-                Message = ex.Message;
                 Error = true;
-                Log.Write(Message);
+                Log.Write(ex);
             }
         }
 
@@ -126,9 +118,8 @@ namespace FileManager
             }
             catch (Exception e)
             {
-                Message = e.Message;
                 Error = true;
-                Log.Write(Message);
+                Log.Write(e);
             }
 
             try
@@ -140,9 +131,8 @@ namespace FileManager
             }
             catch (Exception ex)
             {
-                Message = ex.Message;
                 Error = true;
-                Log.Write(Message);
+                Log.Write(ex);
             }
             
         }
@@ -169,9 +159,8 @@ namespace FileManager
             }
             catch (Exception e)
             {
-                Message = e.Message;
                 Error = true;
-                Log.Write(Message);
+                Log.Write(e);
             }
         }
 

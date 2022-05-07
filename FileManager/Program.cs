@@ -16,31 +16,25 @@ namespace FileManager
             var Dir = new DirectoryInfo("C:\\ProgramData");
             var DirTo = new DirectoryInfo("C:\\1234");
             var Copy = Command.CopyAsync (Dir,DirTo);
+            var DirTo2 = new DirectoryInfo("C:\\123");
+            var Copy2 = Command.CopyAsync (Dir,DirTo2);
 
-            Console.WriteLine(Command.Message);
             do
             {
                 Console.WriteLine("Программа ожидает завершения копирования...");
                 System.Threading.Thread.Sleep(5000);
             }
-            while (! Copy.IsCompleted );
+            while (! (Copy.IsCompleted && Copy2.IsCompleted));
 
-            if (Command.Error)
-            {
-                Console.WriteLine(Command.Message);
-            }
-            else
-            {
-                Console.WriteLine("Успешно");
-            }
-            
             Console.WriteLine("Типа готово?");
             Copy.Dispose();
+            Copy2.Dispose();
 
             Console.ReadKey(false);
 
             Console.WriteLine("Удаляю");
             Command.Delete (DirTo);
+            Command.Delete(DirTo2);
 
         }
     }
