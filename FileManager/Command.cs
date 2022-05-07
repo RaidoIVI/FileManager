@@ -12,6 +12,7 @@ namespace FileManager
     {
         public static bool Error { get; private set; }
         public static string Message { get; private set; }
+        // public static List <Task> Tasks { get; } 
 
         #region Delete
 
@@ -24,7 +25,6 @@ namespace FileManager
                 {
                     file.Delete();
                 }
-                Error = false;
             }
             catch (Exception e)
             {                
@@ -39,7 +39,6 @@ namespace FileManager
                     Delete(dir);
                 }
                 Dir.Delete();
-                Error = false;
             }
             catch (Exception ex)
             {
@@ -54,7 +53,6 @@ namespace FileManager
             {
                 PrepareToDelete(File);
                 File.Delete();
-                Error = false;
             }
             catch (Exception e)
             {
@@ -76,7 +74,6 @@ namespace FileManager
                 {
                     file.Attributes = FileAttributes.Normal;
                 }
-                Error = false;
             }
             catch (Exception e)
             {
@@ -126,7 +123,6 @@ namespace FileManager
                     to.Refresh();
                     to.Attributes = From.Attributes;
                 }
-                Error = false;
             }
             catch (Exception e)
             {
@@ -139,9 +135,8 @@ namespace FileManager
             {
                 foreach (FileInfo file in From.GetFiles())
                 {
-                    await CopyAsync(file, To);
+                    await (CopyAsync(file, To));
                 }
-                Error = false;
             }
             catch (Exception ex)
             {
@@ -149,6 +144,7 @@ namespace FileManager
                 Error = true;
                 Log.Write(Message);
             }
+            
         }
         public static async Task CopyAsync (FileInfo File, DirectoryInfo To)
         {
@@ -165,10 +161,11 @@ namespace FileManager
                     using (FileStream destinationStream = to.Create())
                     {
                         await sourseStream.CopyToAsync(destinationStream);
+                        destinationStream.Flush(true);
                     }
                 }
                 to.Attributes = File.Attributes;
-                Error = false;
+
             }
             catch (Exception e)
             {

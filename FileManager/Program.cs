@@ -23,7 +23,7 @@ namespace FileManager
                 Console.WriteLine("Программа ожидает завершения копирования...");
                 System.Threading.Thread.Sleep(5000);
             }
-            while (!Copy.IsCompleted);
+            while (! Copy.IsCompleted );
 
             if (Command.Error)
             {
@@ -33,9 +33,13 @@ namespace FileManager
             {
                 Console.WriteLine("Успешно");
             }
+            
+            Console.WriteLine("Типа готово?");
+            Copy.Dispose();
 
             Console.ReadKey(false);
 
+            Console.WriteLine("Удаляю");
             Command.Delete (DirTo);
 
         }
