@@ -13,28 +13,46 @@ namespace FileManager
         static void Main()
 
         {
-            var Dir = new DirectoryInfo("C:\\ProgramData");
-            var DirTo = new DirectoryInfo("C:\\1234");
-            var Copy = Command.CopyAsync (Dir,DirTo);
-            var DirTo2 = new DirectoryInfo("C:\\123");
-            var Copy2 = Command.CopyAsync (Dir,DirTo2);
+            var Dir = new DirectoryInfo("c:\\");
+            //var DirTo = new DirectoryInfo("C:\\1234");
+            //var Copy = Command.CopyAsync (Dir,DirTo);
+            //var DirTo2 = new DirectoryInfo("C:\\123");
+            //var Copy2 = Command.CopyAsync (Dir,DirTo2);
 
+            //do
+            //{
+            //    Console.WriteLine("Программа ожидает завершения копирования...");
+            //    System.Threading.Thread.Sleep(5000);
+            //}
+            //while (! (Copy.IsCompleted && Copy2.IsCompleted));
+
+            //Console.WriteLine("Типа готово?");
+            //Copy.Dispose();
+            //Copy2.Dispose();
+            ConsoleKey key = ConsoleKey.Backspace;
+            int i = 1;
+            var TopWindow = new Window(0, 0, 120, 30, Command.List(Dir), true);
             do
             {
-                Console.WriteLine("Программа ожидает завершения копирования...");
-                System.Threading.Thread.Sleep(5000);
+                if (key == ConsoleKey.PageUp)
+                {
+                    i++;
+                }
+                if (key == ConsoleKey.PageDown)
+                {
+                    i--;
+                }
+
+                TopWindow.Draw(i);
+                key = Console.ReadKey(false).Key;
             }
-            while (! (Copy.IsCompleted && Copy2.IsCompleted));
+            while (key != ConsoleKey.Escape);
 
-            Console.WriteLine("Типа готово?");
-            Copy.Dispose();
-            Copy2.Dispose();
+            //Console.ReadKey(true);
 
-            Console.ReadKey(false);
-
-            Console.WriteLine("Удаляю");
-            Command.Delete (DirTo);
-            Command.Delete(DirTo2);
+            //Console.WriteLine("Удаляю");
+            //Command.Delete (DirTo);
+            //Command.Delete(DirTo2);
 
         }
     }

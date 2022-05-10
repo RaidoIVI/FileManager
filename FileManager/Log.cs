@@ -14,7 +14,7 @@ namespace FileManager
         public static void Write(Exception Value)
 
         {
-            Console.WriteLine ($"Метод {Value.StackTrace.ToString() } вызвал исключение {Value.Message}");
+            Console.WriteLine ($"Возникла ошибка {Value.Message}");
         }
 
     }

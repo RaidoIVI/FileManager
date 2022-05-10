@@ -166,5 +166,75 @@ namespace FileManager
 
         #endregion
 
+        #region List
+
+        internal static StringBuilder List (DirectoryInfo dir)
+        {
+            var tree = new StringBuilder();
+            GetTree(tree, dir, "", true, 2);
+            return tree;
+        }
+
+        private static void GetTree(StringBuilder tree, DirectoryInfo dir, string indent, bool lastDirectory, int counter)
+        {
+            try
+            {
+                tree.Append(indent);
+                if (lastDirectory)
+                {
+                    tree.Append("└─");
+                    indent += "  ";
+                }
+                else
+                {
+                    tree.Append("├─");
+                    indent += "│ ";
+                }
+
+                tree.Append($"{dir.Name}\n");
+
+                FileInfo[] subFiles = dir.GetFiles();
+                DirectoryInfo[] subDirects = dir.GetDirectories();
+                for (int i = 0; i < subFiles.Length; i++)
+                {
+                    if (i == subFiles.Length - 1 && subDirects.Length == 0)
+                    {
+                        tree.Append($"{indent}└─{subFiles[i].Name}\n");
+                    }
+                    else
+                    {
+                        tree.Append($"{indent}├─{subFiles[i].Name}\n");
+                    }
+                }
+                if (counter > 0)
+                {
+                    counter--;
+                    for (int i = 0; i < subDirects.Length; i++)
+                    {
+                        GetTree(tree, subDirects[i], indent, i == subDirects.Length - 1, counter);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < subDirects.Length; i++)
+                    {
+                        if (i == subDirects.Length - 1)
+                        {
+                            tree.Append($"{indent}└─{subDirects[i].Name}\n");
+                        }
+                        else
+                        {
+                            tree.Append($"{indent}├─{subDirects[i].Name}\n");
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Write(e);
+            }
+        }
+
+        #endregion
     }
 }
