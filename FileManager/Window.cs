@@ -44,6 +44,7 @@ namespace FileManager
 
         internal void Draw()
         {
+            Console.CursorVisible = false;
             Console.BackgroundColor = ConsoleColor.DarkBlue;
             Console.SetCursorPosition(x, y);
             Console.Write("╔");

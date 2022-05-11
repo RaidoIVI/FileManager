@@ -171,7 +171,7 @@ namespace FileManager
         internal static StringBuilder List (DirectoryInfo dir)
         {
             var tree = new StringBuilder();
-            GetTree(tree, dir, "", true, 2);
+            GetTree(tree, dir, "", true, 3);
             return tree;
         }
 

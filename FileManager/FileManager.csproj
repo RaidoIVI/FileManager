@@ -64,7 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Window.cs" />
-    <Compile Include="Output.cs" />
+    <Compile Include="ComPromt.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Program.cs" />
