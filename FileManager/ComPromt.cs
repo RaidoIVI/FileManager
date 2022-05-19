@@ -10,19 +10,65 @@ namespace FileManager
     {
         private static List<StringBuilder> comList;
 
-        static void ProcessEnterCommand(int width)
+        private static void ProcessEnterCommand(int width)
         {
-            //(int left, int top) = GetCursorPosition();
 
             StringBuilder command = new StringBuilder();
-
-            char key;
+            int index = comList.Count+1;
 
             do
             {
+                var currentLeft = Console.CursorLeft;
+                var currentTop = Console.CursorTop;
+
                 var key = Console.ReadKey();
 
-                cas
+                switch (key.Key)
+                    {
+                    case ConsoleKey.Backspace :
+
+                        if (command.Length > 0)
+                        {
+                            command.Remove(command.Length - 1, 1);
+                            Console.SetCursorPosition(currentLeft - 1, currentTop);
+                            Console.Write(" ");
+                            Console.SetCursorPosition(currentLeft - 1, currentTop);
+                        }
+                        else
+                        {
+                            Console.SetCursorPosition(currentLeft,currentTop);
+                        }
+                        break;
+
+                    case ConsoleKey.Enter:
+                        comList.Add(command);
+                        ParseCommandString();
+                        break;
+                    case ConsoleKey.PageUp:
+
+                        break;
+                    case ConsoleKey.PageDown:
+
+                        break;
+                    case ConsoleKey.Escape:
+
+                        break;
+                    case ConsoleKey.UpArrow:
+
+                        break;
+                    case ConsoleKey.DownArrow:
+
+                        break;
+                    case ConsoleKey.LeftArrow:
+
+                        break;
+                    case ConsoleKey.RightArrow:
+
+                        break;
+                    default: 
+                        command.Append(key.Key);
+                        break;
+                }
 
                 //(int currentLeft, int currentTop) = GetCursorPosition();
 
@@ -32,26 +78,18 @@ namespace FileManager
                     Console.Write(" ");
                     Console.SetCursorPosition(currentLeft - 1, top);
                 }
-                if (key == (char)8/*ConsoleKey.Backspace*/)
-                {
-                    if (command.Length > 0)
-                        command.Remove(command.Length - 1, 1);
-                    if (currentLeft >= left)
-                    {
-                        Console.SetCursorPosition(currentLeft, top);
-                        Console.Write(" ");
-                        Console.SetCursorPosition(currentLeft, top);
-                    }
-                    else
-                    {
-                        Console.SetCursorPosition(left, top);
-                    }
-                }
+               
             }
             while (key != (char)13);
             ParseCommandString(command.ToString());
 
         }
+
+        private static void ParseCommandString()
+        {
+            throw new NotImplementedException();
+        }
+
         static void ParseCommandString(string command)
         {
             string[] commandParams = command.ToLower().Split(' ');

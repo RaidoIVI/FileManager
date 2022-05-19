@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI.cs" />
     <Compile Include="Window.cs" />
     <Compile Include="ComPromt.cs" />
     <Compile Include="Log.cs" />
